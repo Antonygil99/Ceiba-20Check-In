@@ -59,10 +59,17 @@ export default function Index() {
       toast.error("El nombre es obligatorio");
       return;
     }
+    const title = (s: string) => s.split(/\s+/).map(w => w.split('-').map(p => p ? p.charAt(0).toLocaleUpperCase('es') + p.slice(1).toLocaleLowerCase('es') : p).join('-')).join(' ');
+    const clean = (v?: string) => {
+      const t = (v ?? "").trim();
+      if (!t || t === "-") return "";
+      return title(t);
+    };
     const norm = {
       ...editing,
-      dia1: editing.dia1?.trim() === "-" ? "" : editing.dia1 ?? "",
-      dia2: editing.dia2?.trim() === "-" ? "" : editing.dia2 ?? "",
+      nombre: clean(editing.nombre),
+      dia1: clean(editing.dia1),
+      dia2: clean(editing.dia2),
     };
     setGuests((prev) => {
       const idx = prev.findIndex((g) => g.nombre.toLowerCase() === norm.nombre.toLowerCase());
