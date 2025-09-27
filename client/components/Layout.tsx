@@ -9,7 +9,9 @@ export default function Layout() {
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/70 bg-background/80 border-b">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-2">
-            <div className="h-8 w-8 rounded-xl bg-primary text-primary-foreground grid place-items-center shadow-md">✓</div>
+            <div className="h-8 w-8 rounded-xl bg-primary text-primary-foreground grid place-items-center shadow-md">
+              ✓
+            </div>
             <span className="font-semibold tracking-tight">CEIBA Check In</span>
           </Link>
           <div className="hidden md:flex items-center gap-2"></div>

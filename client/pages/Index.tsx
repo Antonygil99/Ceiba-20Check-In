@@ -37,7 +37,11 @@ export default function Index() {
   }, [guests]);
 
   const filtered = useMemo(() => {
-    const normalize = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const normalize = (s: string) =>
+      s
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
     const q = normalize(search.trim());
     if (!q) return guests;
     return guests.filter((g) => normalize(g.nombre).includes(q));
@@ -59,7 +63,21 @@ export default function Index() {
       toast.error("El nombre es obligatorio");
       return;
     }
-    const title = (s: string) => s.split(/\s+/).map(w => w.split('-').map(p => p ? p.charAt(0).toLocaleUpperCase('es') + p.slice(1).toLocaleLowerCase('es') : p).join('-')).join(' ');
+    const title = (s: string) =>
+      s
+        .split(/\s+/)
+        .map((w) =>
+          w
+            .split("-")
+            .map((p) =>
+              p
+                ? p.charAt(0).toLocaleUpperCase("es") +
+                  p.slice(1).toLocaleLowerCase("es")
+                : p,
+            )
+            .join("-"),
+        )
+        .join(" ");
     const clean = (v?: string) => {
       const t = (v ?? "").trim();
       if (!t || t === "-") return "";
@@ -72,7 +90,9 @@ export default function Index() {
       dia2: clean(editing.dia2),
     };
     setGuests((prev) => {
-      const idx = prev.findIndex((g) => g.nombre.toLowerCase() === norm.nombre.toLowerCase());
+      const idx = prev.findIndex(
+        (g) => g.nombre.toLowerCase() === norm.nombre.toLowerCase(),
+      );
       if (idx >= 0) {
         const next = [...prev];
         next[idx] = norm;
@@ -125,15 +145,30 @@ export default function Index() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <input id="csv" type="file" accept=".csv" onChange={handleFile} className="hidden" />
-            <Button variant="outline" onClick={exportCSV}>Exportar CSV</Button>
+            <input
+              id="csv"
+              type="file"
+              accept=".csv"
+              onChange={handleFile}
+              className="hidden"
+            />
+            <Button variant="outline" onClick={exportCSV}>
+              Exportar CSV
+            </Button>
             <label htmlFor="csv">
               <Button asChild>
-                <span className="inline-flex items-center"><Plus className="mr-2" />Importar CSV</span>
+                <span className="inline-flex items-center">
+                  <Plus className="mr-2" />
+                  Importar CSV
+                </span>
               </Button>
             </label>
-            <Button onClick={onAdd} className="bg-primary text-primary-foreground rounded-xl shadow-sm">
-              <Plus className="mr-2" />Añadir
+            <Button
+              onClick={onAdd}
+              className="bg-primary text-primary-foreground rounded-xl shadow-sm"
+            >
+              <Plus className="mr-2" />
+              Añadir
             </Button>
           </div>
         </div>
@@ -154,23 +189,41 @@ export default function Index() {
               <tr key={g.nombre} className="border-t hover:bg-accent/40">
                 <td className="px-4 py-3">
                   {g.asistio ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-400 px-2.5 py-1 text-xs font-semibold"><CheckCircle2 className="h-4 w-4"/>Asistió</span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-400 px-2.5 py-1 text-xs font-semibold">
+                      <CheckCircle2 className="h-4 w-4" />
+                      Asistió
+                    </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Circle className="h-4 w-4"/>No Asistió</span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Circle className="h-4 w-4" />
+                      No Asistió
+                    </span>
                   )}
                 </td>
                 <td className="px-4 py-3">
-                  <button onClick={() => onEdit(g)} className="text-primary font-medium hover:underline">
+                  <button
+                    onClick={() => onEdit(g)}
+                    className="text-primary font-medium hover:underline"
+                  >
                     {g.nombre}
                   </button>
                 </td>
-                <td className="px-4 py-3">{g.dia1 || <span className="text-muted-foreground">—</span>}</td>
-                <td className="px-4 py-3">{g.dia2 || <span className="text-muted-foreground">—</span>}</td>
+                <td className="px-4 py-3">
+                  {g.dia1 || <span className="text-muted-foreground">—</span>}
+                </td>
+                <td className="px-4 py-3">
+                  {g.dia2 || <span className="text-muted-foreground">—</span>}
+                </td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-16 text-center text-muted-foreground">No hay resultados</td>
+                <td
+                  colSpan={4}
+                  className="px-4 py-16 text-center text-muted-foreground"
+                >
+                  No hay resultados
+                </td>
               </tr>
             )}
           </tbody>
@@ -180,7 +233,9 @@ export default function Index() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="rounded-2xl">
           <DialogHeader>
-            <DialogTitle>{editing?.nombre ? "Editar invitado" : "Nuevo invitado"}</DialogTitle>
+            <DialogTitle>
+              {editing?.nombre ? "Editar invitado" : "Nuevo invitado"}
+            </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="grid gap-2">
@@ -188,7 +243,9 @@ export default function Index() {
               <Input
                 autoFocus
                 value={editing?.nombre ?? ""}
-                onChange={(e) => setEditing((s) => (s ? { ...s, nombre: e.target.value } : s))}
+                onChange={(e) =>
+                  setEditing((s) => (s ? { ...s, nombre: e.target.value } : s))
+                }
                 placeholder="Nombre completo"
                 className="h-11 rounded-xl"
               />
@@ -198,7 +255,9 @@ export default function Index() {
                 <label className="text-sm font-medium">Día 1</label>
                 <Input
                   value={editing?.dia1 ?? ""}
-                  onChange={(e) => setEditing((s) => (s ? { ...s, dia1: e.target.value } : s))}
+                  onChange={(e) =>
+                    setEditing((s) => (s ? { ...s, dia1: e.target.value } : s))
+                  }
                   placeholder="Ej: jaguar, tapir, No asiste…"
                   className="h-11 rounded-xl"
                 />
@@ -207,7 +266,9 @@ export default function Index() {
                 <label className="text-sm font-medium">Día 2</label>
                 <Input
                   value={editing?.dia2 ?? ""}
-                  onChange={(e) => setEditing((s) => (s ? { ...s, dia2: e.target.value } : s))}
+                  onChange={(e) =>
+                    setEditing((s) => (s ? { ...s, dia2: e.target.value } : s))
+                  }
                   placeholder="Ej: jaguar, tapir, No asiste…"
                   className="h-11 rounded-xl"
                 />
@@ -215,8 +276,20 @@ export default function Index() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={() => { if (!editing) return; setEditing({ ...editing, asistio: true }); setTimeout(saveEditing, 0); }} className="bg-emerald-600 hover:bg-emerald-600/90 text-white">Registrar</Button>
-            <Button variant="outline" onClick={saveEditing}><Pencil className="mr-2" />Editar</Button>
+            <Button
+              onClick={() => {
+                if (!editing) return;
+                setEditing({ ...editing, asistio: true });
+                setTimeout(saveEditing, 0);
+              }}
+              className="bg-emerald-600 hover:bg-emerald-600/90 text-white"
+            >
+              Registrar
+            </Button>
+            <Button variant="outline" onClick={saveEditing}>
+              <Pencil className="mr-2" />
+              Editar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

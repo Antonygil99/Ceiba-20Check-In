@@ -1,4 +1,9 @@
-export type Guest = { nombre: string; dia1: string; dia2: string; asistio?: boolean };
+export type Guest = {
+  nombre: string;
+  dia1: string;
+  dia2: string;
+  asistio?: boolean;
+};
 
 function titleCase(input: string): string {
   return input
@@ -6,8 +11,13 @@ function titleCase(input: string): string {
     .map((w) =>
       w
         .split("-")
-        .map((p) => (p ? p.charAt(0).toLocaleUpperCase("es") + p.slice(1).toLocaleLowerCase("es") : p))
-        .join("-")
+        .map((p) =>
+          p
+            ? p.charAt(0).toLocaleUpperCase("es") +
+              p.slice(1).toLocaleLowerCase("es")
+            : p,
+        )
+        .join("-"),
     )
     .join(" ");
 }
@@ -18,9 +28,15 @@ export function parseCSV(text: string): Guest[] {
   // Normalize header names
   const header = splitCSVLine(lines[0]).map((h) => h.trim().toLowerCase());
   const idxNombre = header.findIndex((h) => h.includes("nombre"));
-  const idxDia1 = header.findIndex((h) => h.includes("día 1") || h.includes("dia 1"));
-  const idxDia2 = header.findIndex((h) => h.includes("día 2") || h.includes("dia 2"));
-  const idxEstado = header.findIndex((h) => h.includes("estado") || h.includes("asist"));
+  const idxDia1 = header.findIndex(
+    (h) => h.includes("día 1") || h.includes("dia 1"),
+  );
+  const idxDia2 = header.findIndex(
+    (h) => h.includes("día 2") || h.includes("dia 2"),
+  );
+  const idxEstado = header.findIndex(
+    (h) => h.includes("estado") || h.includes("asist"),
+  );
 
   const normalizeCell = (v: string) => {
     const t = (v ?? "").trim();
@@ -41,7 +57,9 @@ export function parseCSV(text: string): Guest[] {
       nombre: nNombre,
       dia1: nDia1 ? titleCase(nDia1) : "",
       dia2: nDia2 ? titleCase(nDia2) : "",
-      asistio: estadoRaw ? estadoRaw.includes("asist") && !estadoRaw.includes("no ") : false,
+      asistio: estadoRaw
+        ? estadoRaw.includes("asist") && !estadoRaw.includes("no ")
+        : false,
     });
   }
   return guests;
@@ -49,7 +67,11 @@ export function parseCSV(text: string): Guest[] {
 
 export function toCSV(rows: Guest[]): string {
   const header = ["Nombre", "Día 1", "Día 2", "Estado"];
-  const body = rows.map((r) => [r.nombre, r.dia1, r.dia2, r.asistio ? "Asistió" : "No Asistió"].map(escapeCell).join(","));
+  const body = rows.map((r) =>
+    [r.nombre, r.dia1, r.dia2, r.asistio ? "Asistió" : "No Asistió"]
+      .map(escapeCell)
+      .join(","),
+  );
   return [header.join(","), ...body].join("\n");
 }
 
@@ -78,7 +100,7 @@ function splitCSVLine(line: string): string[] {
         current += ch;
       }
     } else {
-      if (ch === ',') {
+      if (ch === ",") {
         result.push(current);
         current = "";
       } else if (ch === '"') {
