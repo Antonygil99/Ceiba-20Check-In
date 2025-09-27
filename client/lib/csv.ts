@@ -1,4 +1,4 @@
-export type Guest = { nombre: string; dia1: string; dia2: string };
+export type Guest = { nombre: string; dia1: string; dia2: string; asistio?: boolean };
 
 export function parseCSV(text: string): Guest[] {
   const lines = text.split(/\r?\n/).filter(Boolean);
@@ -8,6 +8,7 @@ export function parseCSV(text: string): Guest[] {
   const idxNombre = header.findIndex((h) => h.includes("nombre"));
   const idxDia1 = header.findIndex((h) => h.includes("día 1") || h.includes("dia 1"));
   const idxDia2 = header.findIndex((h) => h.includes("día 2") || h.includes("dia 2"));
+  const idxEstado = header.findIndex((h) => h.includes("estado") || h.includes("asist"));
 
   const guests: Guest[] = [];
   for (let i = 1; i < lines.length; i++) {
@@ -15,18 +16,20 @@ export function parseCSV(text: string): Guest[] {
     if (cells.length === 0) continue;
     const nombre = (cells[idxNombre] ?? "").trim();
     if (!nombre) continue;
+    const estadoRaw = (cells[idxEstado] ?? "").trim().toLowerCase();
     guests.push({
       nombre,
       dia1: (cells[idxDia1] ?? "").trim(),
       dia2: (cells[idxDia2] ?? "").trim(),
+      asistio: estadoRaw ? estadoRaw.includes("asist") && !estadoRaw.includes("no ") : false,
     });
   }
   return guests;
 }
 
 export function toCSV(rows: Guest[]): string {
-  const header = ["Nombre", "Día 1", "Día 2"];
-  const body = rows.map((r) => [r.nombre, r.dia1, r.dia2].map(escapeCell).join(","));
+  const header = ["Nombre", "Día 1", "Día 2", "Estado"];
+  const body = rows.map((r) => [r.nombre, r.dia1, r.dia2, r.asistio ? "Asistió" : "No Asistió"].map(escapeCell).join(","));
   return [header.join(","), ...body].join("\n");
 }
 
