@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, Plus, Save, CheckCircle2, Circle } from "lucide-react";
+import { Search, Plus, CheckCircle2, Circle, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -203,9 +203,8 @@ export default function Index() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setOpen(false)}>Cancelar</Button>
             <Button onClick={() => { if (!editing) return; setEditing({ ...editing, asistio: true }); setTimeout(saveEditing, 0); }} className="bg-emerald-600 hover:bg-emerald-600/90 text-white">Registrar</Button>
-            <Button onClick={saveEditing}><Save className="mr-2" />Guardar</Button>
+            <Button variant="outline" onClick={saveEditing}><Pencil className="mr-2" />Editar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
