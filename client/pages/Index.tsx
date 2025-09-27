@@ -59,14 +59,19 @@ export default function Index() {
       toast.error("El nombre es obligatorio");
       return;
     }
+    const norm = {
+      ...editing,
+      dia1: editing.dia1?.trim() === "-" ? "" : editing.dia1 ?? "",
+      dia2: editing.dia2?.trim() === "-" ? "" : editing.dia2 ?? "",
+    };
     setGuests((prev) => {
-      const idx = prev.findIndex((g) => g.nombre.toLowerCase() === editing.nombre.toLowerCase());
+      const idx = prev.findIndex((g) => g.nombre.toLowerCase() === norm.nombre.toLowerCase());
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = editing;
+        next[idx] = norm;
         return next;
       }
-      return [editing, ...prev];
+      return [norm, ...prev];
     });
     setOpen(false);
     toast.success("Guardado");
