@@ -60,7 +60,12 @@ export default function Index() {
       .map((w) =>
         w
           .split("-")
-          .map((p) => (p ? p.charAt(0).toLocaleUpperCase("es") + p.slice(1).toLocaleLowerCase("es") : p))
+          .map((p) =>
+            p
+              ? p.charAt(0).toLocaleUpperCase("es") +
+                p.slice(1).toLocaleLowerCase("es")
+              : p,
+          )
           .join("-"),
       )
       .join(" ");
@@ -77,7 +82,9 @@ export default function Index() {
       dia2: clean(g.dia2),
     };
     setGuests((prev) => {
-      const idx = prev.findIndex((x) => x.nombre.toLowerCase() === norm.nombre.toLowerCase());
+      const idx = prev.findIndex(
+        (x) => x.nombre.toLowerCase() === norm.nombre.toLowerCase(),
+      );
       if (idx >= 0) {
         const next = [...prev];
         next[idx] = norm;
@@ -119,7 +126,6 @@ export default function Index() {
     URL.revokeObjectURL(url);
   }
 
-
   return (
     <div className="grid gap-6">
       <div className="rounded-2xl border bg-card text-card-foreground shadow-md p-4 md:p-6">
@@ -135,9 +141,15 @@ export default function Index() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={exportCSV}>Exportar CSV</Button>
-            <Button onClick={onAdd} className="bg-primary text-primary-foreground rounded-xl shadow-sm">
-              <Plus className="mr-2" />Añadir
+            <Button variant="outline" onClick={exportCSV}>
+              Exportar CSV
+            </Button>
+            <Button
+              onClick={onAdd}
+              className="bg-primary text-primary-foreground rounded-xl shadow-sm"
+            >
+              <Plus className="mr-2" />
+              Añadir
             </Button>
           </div>
         </div>
@@ -245,7 +257,10 @@ export default function Index() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={registerEditing} className="bg-emerald-600 hover:bg-emerald-600/90 text-white">
+            <Button
+              onClick={registerEditing}
+              className="bg-emerald-600 hover:bg-emerald-600/90 text-white"
+            >
               Registrar
             </Button>
           </DialogFooter>
