@@ -19,16 +19,13 @@ export default function Index() {
   const [editing, setEditing] = useState<Guest | null>(null);
 
   useEffect(() => {
-    const cached = localStorage.getItem("guests");
-    if (cached) {
-      try {
-        setGuests(JSON.parse(cached));
-        return;
-      } catch {}
-    }
     fetch("/guests.csv")
       .then((r) => r.text())
-      .then((t) => setGuests(parseCSV(t)))
+      .then((t) => {
+        const rows = parseCSV(t);
+        setGuests(rows);
+        localStorage.setItem("guests", JSON.stringify(rows));
+      })
       .catch(() => setGuests([]));
   }, []);
 
@@ -114,21 +111,6 @@ export default function Index() {
     URL.revokeObjectURL(url);
   }
 
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    file.text().then((t) => {
-      const rows = parseCSV(t);
-      if (!rows.length) {
-        toast.error("CSV vacío o inválido");
-        return;
-      }
-      setGuests(rows);
-      setSearch("");
-      toast.success("CSV importado");
-    });
-    e.target.value = "";
-  }
 
   return (
     <div className="grid gap-6">
@@ -145,30 +127,9 @@ export default function Index() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <input
-              id="csv"
-              type="file"
-              accept=".csv"
-              onChange={handleFile}
-              className="hidden"
-            />
-            <Button variant="outline" onClick={exportCSV}>
-              Exportar CSV
-            </Button>
-            <label htmlFor="csv">
-              <Button asChild>
-                <span className="inline-flex items-center">
-                  <Plus className="mr-2" />
-                  Importar CSV
-                </span>
-              </Button>
-            </label>
-            <Button
-              onClick={onAdd}
-              className="bg-primary text-primary-foreground rounded-xl shadow-sm"
-            >
-              <Plus className="mr-2" />
-              Añadir
+            <Button variant="outline" onClick={exportCSV}>Exportar CSV</Button>
+            <Button onClick={onAdd} className="bg-primary text-primary-foreground rounded-xl shadow-sm">
+              <Plus className="mr-2" />Añadir
             </Button>
           </div>
         </div>
