@@ -1,5 +1,17 @@
 export type Guest = { nombre: string; dia1: string; dia2: string; asistio?: boolean };
 
+function titleCase(input: string): string {
+  return input
+    .split(/\s+/)
+    .map((w) =>
+      w
+        .split("-")
+        .map((p) => (p ? p.charAt(0).toLocaleUpperCase("es") + p.slice(1).toLocaleLowerCase("es") : p))
+        .join("-")
+    )
+    .join(" ");
+}
+
 export function parseCSV(text: string): Guest[] {
   const lines = text.split(/\r?\n/).filter(Boolean);
   if (lines.length === 0) return [];
@@ -22,10 +34,13 @@ export function parseCSV(text: string): Guest[] {
     const nombre = normalizeCell(cells[idxNombre] ?? "");
     if (!nombre) continue;
     const estadoRaw = (cells[idxEstado] ?? "").trim().toLowerCase();
+    const nNombre = titleCase(nombre);
+    const nDia1 = normalizeCell(cells[idxDia1] ?? "");
+    const nDia2 = normalizeCell(cells[idxDia2] ?? "");
     guests.push({
-      nombre,
-      dia1: normalizeCell(cells[idxDia1] ?? ""),
-      dia2: normalizeCell(cells[idxDia2] ?? ""),
+      nombre: nNombre,
+      dia1: nDia1 ? titleCase(nDia1) : "",
+      dia2: nDia2 ? titleCase(nDia2) : "",
       asistio: estadoRaw ? estadoRaw.includes("asist") && !estadoRaw.includes("no ") : false,
     });
   }
