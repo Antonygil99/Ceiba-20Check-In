@@ -10,17 +10,22 @@ export function parseCSV(text: string): Guest[] {
   const idxDia2 = header.findIndex((h) => h.includes("día 2") || h.includes("dia 2"));
   const idxEstado = header.findIndex((h) => h.includes("estado") || h.includes("asist"));
 
+  const normalizeCell = (v: string) => {
+    const t = (v ?? "").trim();
+    return t === "-" ? "" : t;
+  };
+
   const guests: Guest[] = [];
   for (let i = 1; i < lines.length; i++) {
     const cells = splitCSVLine(lines[i]);
     if (cells.length === 0) continue;
-    const nombre = (cells[idxNombre] ?? "").trim();
+    const nombre = normalizeCell(cells[idxNombre] ?? "");
     if (!nombre) continue;
     const estadoRaw = (cells[idxEstado] ?? "").trim().toLowerCase();
     guests.push({
       nombre,
-      dia1: (cells[idxDia1] ?? "").trim(),
-      dia2: (cells[idxDia2] ?? "").trim(),
+      dia1: normalizeCell(cells[idxDia1] ?? ""),
+      dia2: normalizeCell(cells[idxDia2] ?? ""),
       asistio: estadoRaw ? estadoRaw.includes("asist") && !estadoRaw.includes("no ") : false,
     });
   }
