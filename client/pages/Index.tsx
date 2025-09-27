@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, Plus, CheckCircle2, Circle, Pencil } from "lucide-react";
+import { Search, Plus, CheckCircle2, Circle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -54,42 +54,30 @@ export default function Index() {
     setOpen(true);
   }
 
-  function saveEditing() {
-    if (!editing) return;
-    if (!editing.nombre.trim()) {
-      toast.error("El nombre es obligatorio");
-      return;
-    }
-    const title = (s: string) =>
-      s
-        .split(/\s+/)
-        .map((w) =>
-          w
-            .split("-")
-            .map((p) =>
-              p
-                ? p.charAt(0).toLocaleUpperCase("es") +
-                  p.slice(1).toLocaleLowerCase("es")
-                : p,
-            )
-            .join("-"),
-        )
-        .join(" ");
-    const clean = (v?: string) => {
-      const t = (v ?? "").trim();
-      if (!t || t === "-") return "";
-      return title(t);
-    };
-    const norm = {
-      ...editing,
-      nombre: clean(editing.nombre),
-      dia1: clean(editing.dia1),
-      dia2: clean(editing.dia2),
+  const title = (s: string) =>
+    s
+      .split(/\s+/)
+      .map((w) =>
+        w
+          .split("-")
+          .map((p) => (p ? p.charAt(0).toLocaleUpperCase("es") + p.slice(1).toLocaleLowerCase("es") : p))
+          .join("-"),
+      )
+      .join(" ");
+  const clean = (v?: string) => {
+    const t = (v ?? "").trim();
+    if (!t || t === "-") return "";
+    return title(t);
+  };
+  const upsertGuest = (g: Guest) => {
+    const norm: Guest = {
+      ...g,
+      nombre: clean(g.nombre),
+      dia1: clean(g.dia1),
+      dia2: clean(g.dia2),
     };
     setGuests((prev) => {
-      const idx = prev.findIndex(
-        (g) => g.nombre.toLowerCase() === norm.nombre.toLowerCase(),
-      );
+      const idx = prev.findIndex((x) => x.nombre.toLowerCase() === norm.nombre.toLowerCase());
       if (idx >= 0) {
         const next = [...prev];
         next[idx] = norm;
@@ -97,8 +85,28 @@ export default function Index() {
       }
       return [norm, ...prev];
     });
+  };
+
+  function saveEditing() {
+    if (!editing) return;
+    if (!editing.nombre.trim()) {
+      toast.error("El nombre es obligatorio");
+      return;
+    }
+    upsertGuest(editing);
     setOpen(false);
     toast.success("Guardado");
+  }
+
+  function registerEditing() {
+    if (!editing) return;
+    if (!editing.nombre.trim()) {
+      toast.error("El nombre es obligatorio");
+      return;
+    }
+    upsertGuest({ ...editing, asistio: true });
+    setOpen(false);
+    toast.success("Registrado");
   }
 
   function exportCSV() {
@@ -237,19 +245,8 @@ export default function Index() {
             </div>
           </div>
           <DialogFooter>
-            <Button
-              onClick={() => {
-                if (!editing) return;
-                setEditing({ ...editing, asistio: true });
-                setTimeout(saveEditing, 0);
-              }}
-              className="bg-emerald-600 hover:bg-emerald-600/90 text-white"
-            >
+            <Button onClick={registerEditing} className="bg-emerald-600 hover:bg-emerald-600/90 text-white">
               Registrar
-            </Button>
-            <Button variant="outline" onClick={saveEditing}>
-              <Pencil className="mr-2" />
-              Editar
             </Button>
           </DialogFooter>
         </DialogContent>
