@@ -37,9 +37,10 @@ export default function Index() {
   }, [guests]);
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const normalize = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+    const q = normalize(search.trim());
     if (!q) return guests;
-    return guests.filter((g) => g.nombre.toLowerCase().includes(q));
+    return guests.filter((g) => normalize(g.nombre).includes(q));
   }, [guests, search]);
 
   function onEdit(guest: Guest) {
