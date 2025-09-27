@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, Plus, Save } from "lucide-react";
+import { Search, Plus, Save, CheckCircle2, Circle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -49,7 +49,7 @@ export default function Index() {
   }
 
   function onAdd() {
-    setEditing({ nombre: "", dia1: "", dia2: "" });
+    setEditing({ nombre: "", dia1: "", dia2: "", asistio: false });
     setOpen(true);
   }
 
@@ -131,6 +131,7 @@ export default function Index() {
         <table className="w-full text-sm">
           <thead className="bg-muted/60 text-muted-foreground">
             <tr>
+              <th className="text-left font-medium px-4 py-3">Estado</th>
               <th className="text-left font-medium px-4 py-3">Nombre</th>
               <th className="text-left font-medium px-4 py-3">Día 1</th>
               <th className="text-left font-medium px-4 py-3">Día 2</th>
@@ -139,6 +140,13 @@ export default function Index() {
           <tbody>
             {filtered.map((g) => (
               <tr key={g.nombre} className="border-t hover:bg-accent/40">
+                <td className="px-4 py-3">
+                  {g.asistio ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-400 px-2.5 py-1 text-xs font-semibold"><CheckCircle2 className="h-4 w-4"/>Asistió</span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Circle className="h-4 w-4"/>No Asistió</span>
+                  )}
+                </td>
                 <td className="px-4 py-3">
                   <button onClick={() => onEdit(g)} className="text-primary font-medium hover:underline">
                     {g.nombre}
@@ -150,7 +158,7 @@ export default function Index() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={3} className="px-4 py-16 text-center text-muted-foreground">No hay resultados</td>
+                <td colSpan={4} className="px-4 py-16 text-center text-muted-foreground">No hay resultados</td>
               </tr>
             )}
           </tbody>
@@ -196,6 +204,7 @@ export default function Index() {
           </div>
           <DialogFooter>
             <Button variant="secondary" onClick={() => setOpen(false)}>Cancelar</Button>
+            <Button onClick={() => { if (!editing) return; setEditing({ ...editing, asistio: true }); setTimeout(saveEditing, 0); }} className="bg-emerald-600 hover:bg-emerald-600/90 text-white">Registrar</Button>
             <Button onClick={saveEditing}><Save className="mr-2" />Guardar</Button>
           </DialogFooter>
         </DialogContent>
