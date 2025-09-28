@@ -111,9 +111,18 @@ export default function Index() {
       toast.error("El nombre es obligatorio");
       return;
     }
-    upsertGuest({ ...editing, asistio: true });
-    setOpen(false);
+    const updated = { ...editing, asistio: true } as Guest;
+    upsertGuest(updated);
+    setEditing(updated);
     toast.success("Registrado");
+  }
+
+  function unregisterEditing() {
+    if (!editing) return;
+    const updated = { ...editing, asistio: false } as Guest;
+    upsertGuest(updated);
+    setEditing(updated);
+    toast.success("Asistencia quitada");
   }
 
   function exportCSV() {
@@ -257,12 +266,11 @@ export default function Index() {
             </div>
           </div>
           <DialogFooter>
-            <Button
-              onClick={registerEditing}
-              className="bg-emerald-600 hover:bg-emerald-600/90 text-white"
-            >
-              Registrar
-            </Button>
+            {editing?.asistio ? (
+              <Button onClick={unregisterEditing} className="bg-red-600 hover:bg-red-600/90 text-white">Quitar asistencia</Button>
+            ) : (
+              <Button onClick={registerEditing} className="bg-emerald-600 hover:bg-emerald-600/90 text-white">Registrar</Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
