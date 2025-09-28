@@ -123,6 +123,7 @@ export default function Index() {
     const updated = { ...editing, asistio: false } as Guest;
     upsertGuest(updated);
     setEditing(updated);
+    setOpen(false);
     toast.success("Asistencia quitada");
   }
 
