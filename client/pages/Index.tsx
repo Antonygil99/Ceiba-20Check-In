@@ -269,9 +269,19 @@ export default function Index() {
           </div>
           <DialogFooter>
             {editing?.asistio ? (
-              <Button onClick={unregisterEditing} className="bg-red-600 hover:bg-red-600/90 text-white">Quitar asistencia</Button>
+              <Button
+                onClick={unregisterEditing}
+                className="bg-red-600 hover:bg-red-600/90 text-white"
+              >
+                Quitar asistencia
+              </Button>
             ) : (
-              <Button onClick={registerEditing} className="bg-emerald-600 hover:bg-emerald-600/90 text-white">Registrar</Button>
+              <Button
+                onClick={registerEditing}
+                className="bg-emerald-600 hover:bg-emerald-600/90 text-white"
+              >
+                Registrar
+              </Button>
             )}
           </DialogFooter>
         </DialogContent>
