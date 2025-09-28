@@ -114,6 +114,7 @@ export default function Index() {
     const updated = { ...editing, asistio: true } as Guest;
     upsertGuest(updated);
     setEditing(updated);
+    setOpen(false);
     toast.success("Registrado");
   }
 
