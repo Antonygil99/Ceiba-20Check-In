@@ -127,6 +127,70 @@ export default function Index() {
     toast.success("Asistencia quitada");
   }
 
+  type Checkin = { name: string; email: string; extra?: string }
+
+function toCSVRow(values: (string | number)[]) {
+  // Escapa comillas y separa por comas con comillas
+  return values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
+}
+
+function downloadCSV(row: { timestamp: string; name: string; email: string; extra: string }) {
+  const headers = ['timestamp', 'name', 'email', 'extra']
+  const csvContent = [
+    toCSVRow(headers),
+    toCSVRow([row.timestamp, row.name, row.email, row.extra]),
+  ].join('\n')
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  const date = new Date().toISOString().slice(0,10).replaceAll('-','')
+  a.href = url
+  a.download = `checkins_${date}.csv`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
+export default function Home() {
+  const [form, setForm] = useState<Checkin>({ name: '', email: '', extra: '' })
+  const [status, setStatus] = useState<string>('')
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('Enviando...')
+    try {
+      const res = await fetch('/api/checkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json()
+      if (!res.ok || !data.ok) throw new Error(data?.error || 'Error')
+      setStatus('Guardado ✅')
+      // Genera CSV descargable local (1 fila + headers)
+      downloadCSV(data.row)
+    } catch (err: any) {
+      setStatus(`Error: ${err.message}`)
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-3 max-w-sm">
+      <input name="name" placeholder="Nombre" onChange={onChange} className="input" />
+      <input name="email" placeholder="Email" onChange={onChange} className="input" />
+      <input name="extra" placeholder="Extra (opcional)" onChange={onChange} className="input" />
+      <button type="submit" className="btn">Check-In</button>
+      <p>{status}</p>
+    </form>
+  )
+}
+
   function exportCSV() {
     const blob = new Blob([toCSV(guests)], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
